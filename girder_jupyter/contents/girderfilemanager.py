@@ -22,7 +22,7 @@ class GirderFileManager(ContentsManager):
         allow_none=True,
         config=True,
         help='A Girder API url.',
-        default_value='http://localhost:8080'
+        default_value='http://localhost:8080/api/v1'
     )
 
     apiKey = Unicode(
