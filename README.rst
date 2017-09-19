@@ -10,7 +10,7 @@ Configuration
 Add the following options to your :code:`jupyter_notebook_config.py` 
 ::
     c.NotebookApp.contents_manager_class = 'girder_jupyter.contents.girderfilemanager.GirderFileManager'
-    c.GirderFileManager.apiKey = '<api key>'
+    c.GirderFileManager.api_key = '<api key>'
 
 
 

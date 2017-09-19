@@ -18,14 +18,14 @@ import girder_client
 
 class GirderFileManager(ContentsManager):
 
-    apiUrl = Unicode(
+    api_url = Unicode(
         allow_none=True,
         config=True,
         help='A Girder API url.',
         default_value='http://localhost:8080/api/v1'
     )
 
-    apiKey = Unicode(
+    api_key = Unicode(
         allow_none=True,
         config=True,
         help='A Girder API key.',
@@ -48,10 +48,10 @@ class GirderFileManager(ContentsManager):
 
     @default('gc')
     def _gc(self):
-        gc = girder_client.GirderClient(apiUrl=self.apiUrl)
-        if self.apiKey is not None:
-            gc = girder_client.GirderClient(apiUrl=self.apiUrl)
-            gc.authenticate(apiKey=self.apiKey)
+        gc = girder_client.GirderClient(apiUrl=self.api_url)
+        if self.api_key is not None:
+            gc = girder_client.GirderClient(apiUrl=self.api_url)
+            gc.authenticate(api_key=self.api_key)
         elif self.token is not None:
             gc.token = self.token
 
