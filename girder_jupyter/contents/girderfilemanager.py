@@ -43,7 +43,9 @@ class GirderFileManager(ContentsManager):
     root = Unicode(
         allow_none=True,
         config=True,
-        help='The root in the Girder hierarchy, defaults to user/<login>'
+        help='The root in the Girder hierarchy, defaults to user/<login>.'
+        'This path can include {login} which will be replace with the current users login.',
+        default_value='user/{login}'
     )
 
     @default('gc')
@@ -57,11 +59,6 @@ class GirderFileManager(ContentsManager):
 
         return gc
 
-    @default('root')
-    def _root(self):
-        me = self.gc.get('user/me')
-        return 'user/%s' % me['login']
-
     @default('checkpoints_class')
     def _checkpoints_class(self):
         return GenericFileCheckpoints
@@ -72,6 +69,23 @@ class GirderFileManager(ContentsManager):
         return  {
             'root_dir': os.path.join(home, '.ipynb_checkpoints')
         }
+
+    def _render_login(self, root):
+        if '{login}' in self.root:
+            me = self.gc.get('user/me')
+            # Replace {login} with users login.
+            try:
+                root = root.format(login=me['login'])
+            except KeyError:
+                pass
+
+        return root
+
+    def __init__(self, *args, **kwargs):
+        super(GirderFileManager, self).__init__(*args, **kwargs)
+        # Render {login}
+        self.root = self._render_login(self.root)
+
 
     def _resource(self, path):
         return self.gc.resourceLookup(path, test=True)
@@ -139,7 +153,6 @@ class GirderFileManager(ContentsManager):
         listing += self.gc.get('folder', params)
 
         return listing
-
 
     def _get_girder_path(self, path):
         return  ('%s/%s' % (self.root, path)).rstrip('/')
