@@ -538,6 +538,35 @@ class GirderFileManager(ContentsManager):
 
 
     def rename_file(self, old_path, new_path):
-        """Rename a file or directory."""
-        raise NotImplementedError('Currently not implemented')
+        """
+        Rename a file or directory.
 
+        N.B. Note currently we only support renaming, not moving to another folder.
+        Its not clear that this operation can be performed using rename, it doesn't
+        seem to be exposed through jlab.
+        """
+        girder_path = self._get_girder_path(old_path)
+        resource = self._resource(girder_path)
+        if resource is None:
+            raise web.HTTPError(404, u'Path does not exist: %s' % girder_path)
+
+        def _update_name(type, resource, name):
+            params = {
+                'name': name
+            }
+            self.gc.put('%s/%s' % (type, resource['_id']), params)
+
+        name = os.path.basename(new_path)
+        if self._is_folder(resource):
+            _update_name('folder', resource, name)
+        elif self._is_file(resource):
+            _update_name('file', resource, name)
+        elif self._is_item(resource):
+            item_id = resource['_id']
+            item = self.gc.getItem(item_id)
+            files = list(self.gc.listFile(item_id))
+            _update_name('item', resource, name)
+            # If we have one file and the names match then rename both.
+            # This may or may not be the right behavior.
+            if len(files) == 1 and item['name'] == resource['name']:
+                _update_name('file', files[0], name)
