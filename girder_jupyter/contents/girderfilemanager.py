@@ -53,7 +53,7 @@ class GirderFileManager(ContentsManager):
         gc = girder_client.GirderClient(apiUrl=self.api_url)
         if self.api_key is not None:
             gc = girder_client.GirderClient(apiUrl=self.api_url)
-            gc.authenticate(api_key=self.api_key)
+            gc.authenticate(apiKey=self.api_key)
         elif self.token is not None:
             gc.token = self.token
 
