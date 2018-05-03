@@ -8,6 +8,9 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+with open('requirements.in') as f:
+    install_reqs = f.readlines()
+
 setup(
     name='girder_jupyter',
 
@@ -16,10 +19,10 @@ setup(
     description='A jupyter content manager for Girder',
     long_description=long_description,
 
-    url='https://github.com/cjh1/girder_jupyter',
+    url='https://github.com/girder/girder_jupyter',
 
     author='Kitware Inc',
-    author_email='chris.harris@kitware.com',
+    author_email='kitware@kitware.com',
 
     license='BSD 3-Clause',
 
@@ -42,15 +45,7 @@ setup(
 
     packages=['girder_jupyter', 'girder_jupyter.contents'],
 
-    install_requires=[
-        'girder_client',
-        'python-dateutil',
-        'nbformat',
-        'notebook',
-        'traitlets',
-        'tornado',
-        'six'
-    ],
+    install_requires=install_reqs,
 
     extras_require={
 
