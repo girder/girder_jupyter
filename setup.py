@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -43,7 +43,7 @@ setup(
 
     keywords='jupyter girder data management',
 
-    packages=['girder_jupyter', 'girder_jupyter.contents'],
+    packages=find_packages(),
 
     install_requires=install_reqs,
 

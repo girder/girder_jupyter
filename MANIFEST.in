@@ -1,0 +1,5 @@
+include setup.py
+include requirements.in
+include README.rst
+global-exclude *.pyc *.pyo
+
