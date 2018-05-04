@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 from six import BytesIO
 import dateutil
@@ -61,12 +60,14 @@ class GirderFileManager(ContentsManager):
 
     @default('checkpoints_class')
     def _checkpoints_class(self):
+
         return GenericFileCheckpoints
 
     @default('checkpoints_kwargs')
     def _checkpoints_kwargs(self):
-        home = os.path.expanduser("~")
-        return  {
+        home = os.path.expanduser('~')
+
+        return {
             'root_dir': os.path.join(home, '.ipynb_checkpoints')
         }
 
@@ -86,10 +87,8 @@ class GirderFileManager(ContentsManager):
         # Render {login}
         self.root = self._render_login(self.root)
 
-
     def _resource(self, path):
         return self.gc.resourceLookup(path, test=True)
-
 
     def _resource_exists(self, path, model_type):
         resource = self._resource(path)
@@ -134,7 +133,6 @@ class GirderFileManager(ContentsManager):
 
         return None
 
-
     def _list_resource(self, resource):
         listing = []
 
@@ -155,7 +153,8 @@ class GirderFileManager(ContentsManager):
         return listing
 
     def _get_girder_path(self, path):
-        return  ('%s/%s' % (self.root, path)).rstrip('/')
+
+        return ('%s/%s' % (self.root, path)).rstrip('/')
 
     def dir_exists(self, path):
         """Does a directory exist at the given path?
@@ -169,7 +168,9 @@ class GirderFileManager(ContentsManager):
         -------
         exists : bool
             Whether the path does indeed exist.
+
         """
+
         path = path.strip('/')
         girder_path = self._get_girder_path(path)
 
@@ -186,7 +187,9 @@ class GirderFileManager(ContentsManager):
         -------
         hidden : bool
             Whether the path is hidden.
+
         """
+
         return False
 
     def file_exists(self, path=''):
@@ -201,12 +204,12 @@ class GirderFileManager(ContentsManager):
         -------
         exists : bool
             Whether the file exists.
+
         """
         path = path.strip('/')
         girder_path = self._get_girder_path(path)
 
         return self._file(girder_path) is not None
-
 
     def _has_write_access(self, resource):
         if self._is_folder(resource) or self._is_user(resource):
@@ -222,7 +225,6 @@ class GirderFileManager(ContentsManager):
         else:
             # TODO Need to work out error reporting
             raise Exception('Unexpected resource type: %s' % resource['_modelType'])
-
 
     def _base_model(self, path, resource):
         """Build the common base of a contents model
@@ -242,14 +244,13 @@ class GirderFileManager(ContentsManager):
         model['name'] = resource.get('name', resource.get('login'))
         model['path'] = path
         model['last_modified'] = dateutil.parser.parse(updated)
-        model['created'] =  dateutil.parser.parse(created)
+        model['created'] = dateutil.parser.parse(created)
         model['content'] = None
         model['format'] = None
         model['mimetype'] = None
         model['writable'] = self._has_write_access(resource)
 
         return model
-
 
     def _dir_model(self, path, resource, content=True, format=None):
         """Build a model for a directory
@@ -295,8 +296,8 @@ class GirderFileManager(ContentsManager):
                     content = stream.getvalue().decode('utf8')
                 except UnicodeError:
                     if format == 'text':
-                        raise web.HTTPError( 400,
-                            "%s is not UTF-8 encoded" % girder_path,
+                        raise web.HTTPError(
+                            400, '%s is not UTF-8 encoded' % girder_path,
                             reason='bad format')
             else:
                 format = 'base64'
@@ -359,33 +360,30 @@ class GirderFileManager(ContentsManager):
 
         return model
 
-
-
     def _get(self, path, resource, content=True, type=None, format=None):
         """Get a file or directory model."""
 
         girder_path = self._get_girder_path(path)
 
-        if not self._is_type(resource, ['file', 'item', 'folder', 'user']) :
-            raise web.HTTPError(404, u'No such file or directory: %s' % girder_path)
+        if not self._is_type(resource, ['file', 'item', 'folder', 'user']):
+            raise web.HTTPError(404, 'No such file or directory: %s' % girder_path)
 
         if type == 'notebook' or (type is None and path.endswith('.ipynb')):
             model = self._notebook_model(path, resource, content)
         elif self._is_folder(resource) or self._is_user(resource):
             if type not in (None, 'directory'):
-                raise web.HTTPError(400,
-                                u'%s is a directory, not a %s' % (girder_path, type), reason='bad type')
+                raise web.HTTPError(
+                    400, '%s is a directory, not a %s' % (girder_path, type), reason='bad type')
             model = self._dir_model(path, resource, content, format)
-        elif  self._is_item(resource):
+        elif self._is_item(resource):
             model = self._item_model(path, resource, content, format)
         else:
             if type == 'directory':
-                raise web.HTTPError(400,
-                                u'%s is not a directory' % girder_path, reason='bad type')
+                raise web.HTTPError(
+                    400, '%s is not a directory' % girder_path, reason='bad type')
             model = self._file_model(path, resource, content=content, format=format)
 
         return model
-
 
     def get(self, path, content=True, type=None, format=None):
         """Get a file or directory model."""
@@ -425,7 +423,6 @@ class GirderFileManager(ContentsManager):
         else:
             self.gc.uploadFileContents(file['_id'], stream, size)
 
-
     def _create_folders(self, path):
         """
         Create all necessary folder for a given path.
@@ -436,16 +433,17 @@ class GirderFileManager(ContentsManager):
 
         current_resource = self._resource(root)
         if current_resource is None:
-            raise web.HTTPError(404, u'No such file or directory: %s' % path)
+            raise web.HTTPError(404, 'No such file or directory: %s' % path)
 
         for resource_name in path:
             # Can't create folder under an item so return permission denied
             if self._is_item(current_resource):
-                raise web.HTTPError(403, u'Permission denied: %s' % resource_name)
+                raise web.HTTPError(403, 'Permission denied: %s' % resource_name)
 
-            next_resource = next(self.gc.listFolder(current_resource['_id'],
-                                                    name=resource_name,
-                                                    parentFolderType=current_resource['_modelType']), None)
+            next_resource = next(
+                self.gc.listFolder(current_resource['_id'],
+                                   name=resource_name,
+                                   parentFolderType=current_resource['_modelType']), None)
 
             # Check for items
             if next_resource is None:
@@ -455,13 +453,14 @@ class GirderFileManager(ContentsManager):
             if next_resource is None:
                 # Can't create folder under an item so return permission denied
                 if self._is_item(current_resource):
-                    raise web.HTTPError(403, u'Permission denied: %s' % resource_name)
-                current_resource = self.gc.createFolder(current_resource['_id'], resource_name, parentType= current_resource['_modelType'])
+                    raise web.HTTPError(403, 'Permission denied: %s' % resource_name)
+                current_resource = self.gc.createFolder(current_resource['_id'],
+                                                        resource_name,
+                                                        parentType=current_resource['_modelType'])
             else:
                 current_resource = next_resource
 
         return current_resource
-
 
     def save(self, model, path):
         """
@@ -474,9 +473,9 @@ class GirderFileManager(ContentsManager):
         girder_path = self._get_girder_path(path)
 
         if 'type' not in model:
-            raise web.HTTPError(400, u'No file type provided')
+            raise web.HTTPError(400, 'No file type provided')
         if 'content' not in model and model['type'] != 'directory':
-            raise web.HTTPError(400, u'No file content provided')
+            raise web.HTTPError(400, 'No file content provided')
 
         try:
             if model['type'] == 'notebook':
@@ -485,16 +484,17 @@ class GirderFileManager(ContentsManager):
                 nb = nbformat.writes(nb, version=nbformat.NO_CONVERT)
                 self._upload_to_path(nb, 'application/json', 'text', girder_path)
             elif model['type'] == 'file':
-                self._upload_to_path(model.get('content'), model.get('mimetype'), model.get('format'), girder_path)
+                self._upload_to_path(model.get('content'), model.get('mimetype'),
+                                     model.get('format'), girder_path)
             elif model['type'] == 'directory':
                 self._create_folders(girder_path)
             else:
-                raise web.HTTPError(400, "Unhandled contents type: %s" % model['type'])
+                raise web.HTTPError(400, 'Unhandled contents type: %s' % model['type'])
         except web.HTTPError:
             raise
         except Exception as e:
-            self.log.error(u'Error while saving file: %s %s', path, e, exc_info=True)
-            raise web.HTTPError(500, u'Unexpected error while saving file: %s %s' % (path, e))
+            self.log.error('Error while saving file: %s %s', path, e, exc_info=True)
+            raise web.HTTPError(500, 'Unexpected error while saving file: %s %s' % (path, e))
 
         validation_message = None
         if model['type'] == 'notebook':
@@ -512,7 +512,7 @@ class GirderFileManager(ContentsManager):
         girder_path = self._get_girder_path(path)
         resource = self._resource(girder_path)
         if resource is None:
-            raise web.HTTPError(404, u'Path does not exist: %s' % girder_path)
+            raise web.HTTPError(404, 'Path does not exist: %s' % girder_path)
 
         if self._is_folder(resource):
             # Don't delete non-empty directories.
@@ -521,7 +521,7 @@ class GirderFileManager(ContentsManager):
             resources = self._list_resource(resource)
 
             if resources:
-                raise web.HTTPError(400, u'Directory %s not empty' % girder_path)
+                raise web.HTTPError(400, 'Directory %s not empty' % girder_path)
 
             self.gc.delete('folder/%s' % resource['_id'])
         else:
@@ -534,13 +534,12 @@ class GirderFileManager(ContentsManager):
                     deleted = True
 
             if not deleted:
-                raise web.HTTPError(404, u'File does not exist: %s' % girder_path)
+                raise web.HTTPError(404, 'File does not exist: %s' % girder_path)
 
             # If the item only contained that file clean it up?
             # TODO: What about item metadata?
             if len(files):
-                self.gc.delete('item/%s'% resource['_id'])
-
+                self.gc.delete('item/%s' % resource['_id'])
 
     def rename_file(self, old_path, new_path):
         """
@@ -553,7 +552,7 @@ class GirderFileManager(ContentsManager):
         girder_path = self._get_girder_path(old_path)
         resource = self._resource(girder_path)
         if resource is None:
-            raise web.HTTPError(404, u'Path does not exist: %s' % girder_path)
+            raise web.HTTPError(404, 'Path does not exist: %s' % girder_path)
 
         def _update_name(type, resource, name):
             params = {

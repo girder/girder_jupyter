@@ -1,0 +1,7 @@
+girder_client
+python-dateutil
+nbformat
+notebook
+traitlets
+tornado
+six
