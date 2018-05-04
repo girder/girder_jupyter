@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+      
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - tox-env-{{ checksum "requirements2.txt" }}-{{ checksum "requirements3.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - tox-env-
+          paths: 
+            - .tox
+
+      - run:
+          name: install tox 
+          command: |
+            pip install tox
+
+      - save_cache:
+          paths:
+            - .tox
+          key: tox-env-{{ checksum "requirements2.txt" }}-{{ checksum "requirements3.txt" }}
+        
+      - run:
+          name: run tests
+          command: |
+            tox
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
+          
