@@ -17,10 +17,15 @@ jobs:
             - tox-env-
           paths: 
             - .tox
-
+      - run:
+          name: install python header for building scandir
+          command: |
+            sudo apt-get install python-dev
       - run:
           name: install tox 
           command: |
+            python3 -m venv ../venv
+            . ../venv/bin/activate
             pip install tox
 
       - save_cache:
@@ -31,6 +36,7 @@ jobs:
       - run:
           name: run tests
           command: |
+            . ../venv/bin/activate
             tox
 
       - store_artifacts:
