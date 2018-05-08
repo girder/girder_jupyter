@@ -19,6 +19,7 @@ class GirderContentsTest(APITest):
     @classmethod
     def setup_class(cls):
         cls.config = Config()
+        cls.config.NotebookApp.ip = '127.0.0.1'
         cls.config.NotebookApp.contents_manager_class =\
             'girder_jupyter.contents.girderfilemanager.GirderFileManager'
 
