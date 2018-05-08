@@ -517,7 +517,7 @@ class GirderFileManager(ContentsManager):
 
         return model
 
-    def delete_file(self, path):
+    def delete_file(self, path, allow_non_empty=False):
         """Delete the file or directory at path."""
         path = path.strip('/')
         girder_path = self._get_girder_path(path)
@@ -530,11 +530,9 @@ class GirderFileManager(ContentsManager):
             # TODO A directory containing only leftover checkpoints is
             # considered empty.
             resources = self._list_resource(resource)
-
-            if resources:
+            if not allow_non_empty and resources:
                 raise web.HTTPError(400, 'Directory %s not empty' % girder_path)
-
-            self.gc.delete('folder/%s' % resource['_id'])
+	    self.gc.delete('folder/%s' % resource['_id'])
         else:
             name = path.split('/')[-1]
             files = list(self.gc.listFile(resource['_id']))
@@ -585,3 +583,12 @@ class GirderFileManager(ContentsManager):
             # This may or may not be the right behavior.
             if len(files) == 1 and item['name'] == resource['name']:
                 _update_name('file', files[0], name)
+
+
+    def delete(self, path):
+        """Delete a file/directory and any associated checkpoints."""
+        self.delete_file(path, allow_non_empty=True)
+
+    def rename(self, old_path, new_path):
+        """Rename a file and any checkpoints associated with that file."""
+        self.rename_file(old_path, new_path)
