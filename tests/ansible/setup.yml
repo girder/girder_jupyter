@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  vars:
+    girder_host: girder
+    girder_port: 8080
+    girder_user: "jupyter"
+    girder_password: "jupyter"
+  tasks:
+
+    - name: Create 'jupyter' User
+      girder:
+        port: "{{ girder_port }}"
+        user:
+          firstName: "jupyter"
+          lastName: "jupyter"
+          login: "jupyter"
+          password: "jupyter"
+          email: "jupyter@example.com"
+          admin: yes
+        state: present
+
+    - name: Create filesystem assetstore
+      girder:
+        username: "{{ girder_user }}"
+        password: "{{ girder_password }}"
+        port: "{{ girder_port }}"
+        assetstore:
+          name: "Filesystem Assetstore"
+          type: "filesystem"
+          root: "/data/"
+          current: true
+        state: present
+
+    - name: Restart the server
+      girder:
+        username: "{{ girder_user }}"
+        password: "{{ girder_password }}"
+        port: "{{ girder_port }}"
+        put:
+          path: "system/restart"
+
+    - name: Wait until server restarts
+      wait_for:
+        port: "{{ girder_port }}"
+        delay: 5
