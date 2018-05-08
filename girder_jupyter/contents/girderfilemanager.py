@@ -563,6 +563,12 @@ class GirderFileManager(ContentsManager):
         if resource is None:
             raise web.HTTPError(404, 'Path does not exist: %s' % girder_path)
 
+        # Check is new_path already exists
+        new_girder_path = self._get_girder_path(new_path)
+        existing_resource = self._resource(new_girder_path)
+        if existing_resource is not None:
+            raise web.HTTPError(409, u'File already exists: %s' % new_path)
+
         def _update_name(type, resource, name):
             params = {
                 'name': name
