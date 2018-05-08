@@ -3,7 +3,9 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6.1
-      
+      - image: girder/girder
+      - image: mongo:latest
+
     working_directory: ~/repo
 
     steps:
@@ -15,14 +17,19 @@ jobs:
             - tox-env-{{ checksum "requirements2.txt" }}-{{ checksum "requirements3.txt" }}
             # fallback to using the latest cache if no exact match is found
             - tox-env-
-          paths: 
+          paths:
             - .tox
       - run:
           name: install python header for building scandir
           command: |
             sudo apt-get install python-dev
       - run:
-          name: install tox 
+          name: create venv
+          command: |
+            python3 -m venv ../venv
+
+      - run:
+          name: install tox
           command: |
             python3 -m venv ../venv
             . ../venv/bin/activate
@@ -32,7 +39,23 @@ jobs:
           paths:
             - .tox
           key: tox-env-{{ checksum "requirements2.txt" }}-{{ checksum "requirements3.txt" }}
-        
+      - run:
+          name: install ansible
+          command: |
+            . ../venv/bin/activate
+            pip install ansible
+      - run:
+          name: install Girder ansible role
+          command: |
+            . ../venv/bin/activate
+            ansible-galaxy install --force --roles-path ./tests/ansible/roles girder.girder
+            pip install girder_client
+      - run:
+          name: configure girder server using playbook
+          command: |
+            . ../venv/bin/activate
+            cd ./tests/ansible/
+            ansible-playbook --connection local -i "localhost,"  setup.yml -e "ansible_python_interpreter=/home/circleci/venv/bin/python"
       - run:
           name: run tests
           command: |
@@ -42,4 +65,4 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-          
+
