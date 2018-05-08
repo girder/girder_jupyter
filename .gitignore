@@ -1,1 +1,4 @@
 *.pyc
+.cache/
+.pytest_cache/
+girder_jupyter.egg-info/

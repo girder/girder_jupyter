@@ -476,6 +476,9 @@ class GirderFileManager(ContentsManager):
             raise web.HTTPError(400, 'No file type provided')
         if 'content' not in model and model['type'] != 'directory':
             raise web.HTTPError(400, 'No file content provided')
+        for segment in path.split('/'):
+            if segment.startswith('.'):
+                raise web.HTTPError(400, 'Hidden files and folders are not allowed.')
 
         try:
             if model['type'] == 'notebook':
