@@ -6,7 +6,7 @@ import os
 import json
 
 
-from .constants import GIRDER_API_KEY, GIRDER_API_URL
+from .constants import GIRDER_API_URL
 
 
 class GirderContentsTest(APITest):
@@ -21,9 +21,20 @@ class GirderContentsTest(APITest):
         cls.config = Config()
         cls.config.NotebookApp.contents_manager_class =\
             'girder_jupyter.contents.girderfilemanager.GirderFileManager'
-        cls.config.GirderFileManager.api_key = GIRDER_API_KEY
+
+        if 'GIRDER_API_KEY' in os.environ:
+            api_key = os.environ['GIRDER_API_KEY']
+            cls.config.GirderFileManager.api_key = api_key
+            cls.gc.authenticate(apiKey=api_key)
+        elif 'GIRDER_USER' in os.environ and 'GIRDER_PASSWORD' in os.environ:
+            user = os.environ['GIRDER_USER']
+            password = os.environ['GIRDER_PASSWORD']
+            cls.gc.authenticate(user, password)
+            cls.config.GirderFileManager.token = cls.gc.token
+        else:
+            raise Exception('No Girder credentials configured.')
+
         cls.config.GirderFileManager.root = 'user/{login}/Private'
-        cls.gc.authenticate(apiKey=GIRDER_API_KEY)
         cls.user = cls.gc.get('user/me')
         super(APITest, cls).setup_class()
 

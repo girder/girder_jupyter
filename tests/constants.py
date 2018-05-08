@@ -1,3 +1,1 @@
-GIRDER_API_URL = 'http://localhost:8081/api/v1'
-
-GIRDER_API_KEY = '3xlj0NYE9HP2KQdXdL5hEX6fDrBrAiSzKCIFzniY'
+GIRDER_API_URL = 'http://localhost:8080/api/v1'
