@@ -285,6 +285,7 @@ class GirderFileManager(ContentsManager):
         model['type'] = 'file'
         model['mimetype'] = file['mimeType']
 
+        print(format)
         if content:
             stream = BytesIO()
             self.gc.downloadFile(file['_id'], stream)
@@ -532,7 +533,8 @@ class GirderFileManager(ContentsManager):
             resources = self._list_resource(resource)
             if not allow_non_empty and resources:
                 raise web.HTTPError(400, 'Directory %s not empty' % girder_path)
-	    self.gc.delete('folder/%s' % resource['_id'])
+
+            self.gc.delete('folder/%s' % resource['_id'])
         else:
             name = path.split('/')[-1]
             files = list(self.gc.listFile(resource['_id']))
@@ -589,7 +591,6 @@ class GirderFileManager(ContentsManager):
             # This may or may not be the right behavior.
             if len(files) == 1 and item['name'] == resource['name']:
                 _update_name('file', files[0], name)
-
 
     def delete(self, path):
         """Delete a file/directory and any associated checkpoints."""
