@@ -32,12 +32,14 @@ jupyter-core==4.4.0       # via jupyter-client, nbconvert, nbformat, notebook
 markupsafe==1.0           # via jinja2
 mccabe==0.6.1             # via flake8
 mistune==0.8.3            # via nbconvert
+mock==2.0.0
 more-itertools==4.1.0     # via pytest
 nbconvert==5.3.1          # via notebook
 nbformat==4.4.0
 notebook==5.4.1
 pandocfilters==1.4.2      # via nbconvert
 parso==0.2.0              # via jedi
+pbr==4.0.2                # via mock
 pexpect==4.5.0            # via ipython
 pickleshare==0.7.4        # via ipython
 pluggy==0.6.0             # via pytest, tox
