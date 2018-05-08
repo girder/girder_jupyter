@@ -289,10 +289,6 @@ class GirderFileManager(ContentsManager):
             stream = BytesIO()
             self.gc.downloadFile(file['_id'], stream)
 
-            # Default format to text
-            if format is None:
-                format = 'text'
-
             if format == 'text':
                 try:
                     content = stream.getvalue().decode('utf8')
@@ -301,9 +297,16 @@ class GirderFileManager(ContentsManager):
                         raise web.HTTPError(
                             400, '%s is not UTF-8 encoded' % girder_path,
                             reason='bad format')
+            elif format == 'base64':
+                content = base64.b64encode(stream.getvalue()).decode('ascii')
+            # If not specified, try to decode as UTF-8, and fall back to base64
             else:
-                format = 'base64'
-                base64.b64encode(stream.getvalue()).decode('ascii')
+                try:
+                    content = stream.getvalue().decode('utf8')
+                    format = 'text'
+                except UnicodeError:
+                    content = base64.b64encode(stream.getvalue()).decode('ascii')
+                    format = 'base64'
 
             model.update(
                 content=content,
