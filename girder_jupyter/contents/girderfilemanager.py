@@ -261,10 +261,12 @@ class GirderFileManager(ContentsManager):
         if content:
             model['content'] = contents = []
             for resource in self._list_resource(resource):
-                contents.append(self._get(
-                    '%s/%s' % (path, resource['name']), resource,
-                    content=False, format=format)
-                )
+                name = resource['name']
+                if self.should_list(name) and not name.startswith('.'):
+                    contents.append(self._get(
+                        '%s/%s' % (path, resource['name']), resource,
+                        content=False, format=format)
+                    )
 
             model['format'] = 'json'
 
