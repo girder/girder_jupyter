@@ -381,6 +381,9 @@ class GirderFileManager(ContentsManager):
                     400, '%s is a directory, not a %s' % (girder_path, type), reason='bad type')
             model = self._dir_model(path, resource, content, format)
         elif self._is_item(resource):
+            if type not in (None, 'file', 'notebook'):
+                raise web.HTTPError(
+                    400, '%s is a file, not a %s' % (girder_path, type), reason='bad type')
             model = self._item_model(path, resource, content, format)
         else:
             if type == 'directory':
