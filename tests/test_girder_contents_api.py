@@ -32,12 +32,14 @@ class GirderContentsTest(APITest):
     def delete_dir(self, path):
         path = self._get_girder_path(path)
         resource = self._resource(path)
-        self.gc.delete("folder/{}".format(resource['_id']))
+        if resource is not None:
+            self.gc.delete("folder/{}".format(resource['_id']))
 
     def delete_file(self, path):
         path = self._get_girder_path(path)
         resource = self._resource(path)
-        self.gc.delete("item/{}".format(resource['_id']))
+        if resource is not None:
+            self.gc.delete("item/{}".format(resource['_id']))
 
     # def setUp(self):
     #     for d in (self.dirs + self.hidden_dirs):
