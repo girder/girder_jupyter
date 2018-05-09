@@ -18,7 +18,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - tox-env-
           paths:
-            - .tox
+            - ../.tox
       - run:
           name: install python header for building scandir
           command: |
@@ -37,7 +37,7 @@ jobs:
 
       - save_cache:
           paths:
-            - .tox
+            - ../.tox
           key: tox-env-{{ checksum "requirements2.txt" }}-{{ checksum "requirements3.txt" }}
       - run:
           name: install ansible
@@ -60,7 +60,7 @@ jobs:
           name: run tests
           command: |
             . ../venv/bin/activate
-            tox
+            tox --workdir ../.tox
           environment:
             GIRDER_USER: jupyter
             GIRDER_PASSWORD: jupyter
