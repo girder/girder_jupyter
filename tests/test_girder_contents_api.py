@@ -51,35 +51,6 @@ class GirderContentsTest(APITest):
         if resource is not None:
             self.gc.delete('item/{}'.format(resource['_id']))
 
-    # def setUp(self):
-    #     for d in (self.dirs + self.hidden_dirs):
-    #         self.make_dir(d)
-    #         self.addCleanup(partial(self.delete_dir, d))
-
-    #     for d, name in self.dirs_nbs:
-    #         # create a notebook
-    #         nb = new_notebook()
-    #         nbname = u'{}/{}.ipynb'.format(d, name)
-    #         self.make_nb(nbname, nb)
-    #         self.addCleanup(partial(self.delete_file, nbname))
-
-    #         # create a text file
-    #         txt = self._txt_for_name(name)
-    #         txtname = u'{}/{}.txt'.format(d, name)
-    #         self.make_txt(txtname, txt)
-    #         self.addCleanup(partial(self.delete_file, txtname))
-
-    #         blob = self._blob_for_name(name)
-    #         blobname = u'{}/{}.blob'.format(d, name)
-    #         self.make_blob(blobname, blob)
-    #         self.addCleanup(partial(self.delete_file, blobname))
-    #     self.api = API(self.request)
-
-    def test_mkdir(self):
-        path = u'foo/bar/baz/biz/buz/lol/lal'
-        resp = self.api.mkdir(path)
-        self._check_created(resp, path, type='directory')
-
     def isdir(self, path):
         path = self._get_girder_path(path)
         resource = self._resource(path)
@@ -176,9 +147,3 @@ class GirderContentsTest(APITest):
         """Make a notebook file at a given api_path"""
         content = json.dumps(nb, indent=2)
         self.make_txt(path, content)
-        # os_path = self.to_os_path(api_path)
-
-        # with io.open(os_path, 'w', encoding='utf-8') as f:
-        #     write(nb, f, version=4)
-
-    # def test_make_txttt(self)

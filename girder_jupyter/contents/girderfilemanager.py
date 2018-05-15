@@ -264,7 +264,7 @@ class GirderFileManager(ContentsManager):
                 name = resource['name']
                 if self.should_list(name) and not name.startswith('.'):
                     contents.append(self._get(
-                        '%s/%s' % (path, resource['name']), resource,
+                        '%s/%s' % (path, name), resource,
                         content=False, format=format)
                     )
 
@@ -285,7 +285,6 @@ class GirderFileManager(ContentsManager):
         model['type'] = 'file'
         model['mimetype'] = file['mimeType']
 
-        print(format)
         if content:
             stream = BytesIO()
             self.gc.downloadFile(file['_id'], stream)
@@ -565,7 +564,7 @@ class GirderFileManager(ContentsManager):
         if resource is None:
             raise web.HTTPError(404, 'Path does not exist: %s' % girder_path)
 
-        # Check is new_path already exists
+        # Check if new_path already exists
         new_girder_path = self._get_girder_path(new_path)
         existing_resource = self._resource(new_girder_path)
         if existing_resource is not None:
