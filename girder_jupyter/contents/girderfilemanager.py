@@ -261,10 +261,12 @@ class GirderFileManager(ContentsManager):
         if content:
             model['content'] = contents = []
             for resource in self._list_resource(resource):
-                contents.append(self._get(
-                    '%s/%s' % (path, resource['name']), resource,
-                    content=False, format=format)
-                )
+                name = resource['name']
+                if self.should_list(name) and not name.startswith('.'):
+                    contents.append(self._get(
+                        '%s/%s' % (path, name), resource,
+                        content=False, format=format)
+                    )
 
             model['format'] = 'json'
 
@@ -287,10 +289,6 @@ class GirderFileManager(ContentsManager):
             stream = BytesIO()
             self.gc.downloadFile(file['_id'], stream)
 
-            # Default format to text
-            if format is None:
-                format = 'text'
-
             if format == 'text':
                 try:
                     content = stream.getvalue().decode('utf8')
@@ -299,9 +297,16 @@ class GirderFileManager(ContentsManager):
                         raise web.HTTPError(
                             400, '%s is not UTF-8 encoded' % girder_path,
                             reason='bad format')
+            elif format == 'base64':
+                content = base64.b64encode(stream.getvalue()).decode('ascii')
+            # If not specified, try to decode as UTF-8, and fall back to base64
             else:
-                format = 'base64'
-                base64.b64encode(stream.getvalue()).decode('ascii')
+                try:
+                    content = stream.getvalue().decode('utf8')
+                    format = 'text'
+                except UnicodeError:
+                    content = base64.b64encode(stream.getvalue()).decode('ascii')
+                    format = 'base64'
 
             model.update(
                 content=content,
@@ -376,6 +381,9 @@ class GirderFileManager(ContentsManager):
                     400, '%s is a directory, not a %s' % (girder_path, type), reason='bad type')
             model = self._dir_model(path, resource, content, format)
         elif self._is_item(resource):
+            if type not in (None, 'file', 'notebook'):
+                raise web.HTTPError(
+                    400, '%s is a file, not a %s' % (girder_path, type), reason='bad type')
             model = self._item_model(path, resource, content, format)
         else:
             if type == 'directory':
@@ -476,6 +484,9 @@ class GirderFileManager(ContentsManager):
             raise web.HTTPError(400, 'No file type provided')
         if 'content' not in model and model['type'] != 'directory':
             raise web.HTTPError(400, 'No file content provided')
+        for segment in path.split('/'):
+            if segment.startswith('.'):
+                raise web.HTTPError(400, 'Hidden files and folders are not allowed.')
 
         try:
             if model['type'] == 'notebook':
@@ -506,7 +517,7 @@ class GirderFileManager(ContentsManager):
 
         return model
 
-    def delete_file(self, path):
+    def delete_file(self, path, allow_non_empty=False):
         """Delete the file or directory at path."""
         path = path.strip('/')
         girder_path = self._get_girder_path(path)
@@ -519,8 +530,7 @@ class GirderFileManager(ContentsManager):
             # TODO A directory containing only leftover checkpoints is
             # considered empty.
             resources = self._list_resource(resource)
-
-            if resources:
+            if not allow_non_empty and resources:
                 raise web.HTTPError(400, 'Directory %s not empty' % girder_path)
 
             self.gc.delete('folder/%s' % resource['_id'])
@@ -554,6 +564,12 @@ class GirderFileManager(ContentsManager):
         if resource is None:
             raise web.HTTPError(404, 'Path does not exist: %s' % girder_path)
 
+        # Check if new_path already exists
+        new_girder_path = self._get_girder_path(new_path)
+        existing_resource = self._resource(new_girder_path)
+        if existing_resource is not None:
+            raise web.HTTPError(409, u'File already exists: %s' % new_path)
+
         def _update_name(type, resource, name):
             params = {
                 'name': name
@@ -574,3 +590,11 @@ class GirderFileManager(ContentsManager):
             # This may or may not be the right behavior.
             if len(files) == 1 and item['name'] == resource['name']:
                 _update_name('file', files[0], name)
+
+    def delete(self, path):
+        """Delete a file/directory and any associated checkpoints."""
+        self.delete_file(path, allow_non_empty=True)
+
+    def rename(self, old_path, new_path):
+        """Rename a file and any checkpoints associated with that file."""
+        self.rename_file(old_path, new_path)
