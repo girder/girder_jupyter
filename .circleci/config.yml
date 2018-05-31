@@ -1,4 +1,5 @@
 version: 2
+
 jobs:
   build:
     docker:
@@ -68,4 +69,47 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+  release:
+    docker:
+      - image: circleci/python:2.7
 
+    steps:
+      - checkout
+      - run:
+          name: creaet venv
+          command: |
+            python3 -m venv ../venv
+            . ../venv/bin/activate
+      - run:
+          name: install release dependencies
+          command: |
+            . ../venv/bin/activate
+            pip install twine setuptools_scm
+      - run:
+          name: build the project
+          command: |
+            . ../venv/bin/activate
+            python setup.py sdist
+      - run:
+          name: release to PyPI
+          command: |
+            . ../venv/bin/activate
+            twine upload dist/*
+
+workflows:
+  ci:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+      - release:
+          requires:
+            - build
+
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - master
