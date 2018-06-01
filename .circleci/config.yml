@@ -71,12 +71,12 @@ jobs:
           destination: test-reports
   release:
     docker:
-      - image: circleci/python:2.7
+      - image: circleci/python:3.6.1
 
     steps:
       - checkout
       - run:
-          name: creaet venv
+          name: create venv
           command: |
             python3 -m venv ../venv
             . ../venv/bin/activate
@@ -89,7 +89,7 @@ jobs:
           name: build the project
           command: |
             . ../venv/bin/activate
-            python setup.py sdist
+            python3 setup.py sdist
       - run:
           name: release to PyPI
           command: |
@@ -97,6 +97,7 @@ jobs:
             twine upload dist/*
 
 workflows:
+  version: 2
   ci:
     jobs:
       - build:
