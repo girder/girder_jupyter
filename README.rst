@@ -3,8 +3,8 @@ girder_jupyter
 ==============
 |build-status|
 
-The Jupyter Notebook web application provides a graphical interface for creating, opening, renaming, and deleting files in a virtual filesystem. girder_jupyter is a python package that implements a `content manager <http://jupyter-notebook.readthedocs.io/en/latest/extending/contents.html>`_
-to allow Girder to become a backend for this virtual filesystem. This allows notebooks and files to stored
+The Jupyter Notebook web application provides a graphical interface for creating, opening, renaming, and deleting files in a virtual filesystem. girder_jupyter is a python package that implements a `contents manager <http://jupyter-notebook.readthedocs.io/en/latest/extending/contents.html>`_
+to allow Girder to become a backend for this virtual filesystem. This allows notebooks and files to be stored
 in a Girder server from within Jupyter.
 
 Getting Started
@@ -37,7 +37,7 @@ Configuration Parameters
 - :code:`root` - The root in the Girder hierarchy to use as the content managers root. This path can
 include :code:`{login}` which will be replace with the current users login. Defaults to :code:`'user/{login}'`
 
-Note that either :code:`api_key` or :code:`token` must be provide for the content manager to be able to
+Note that either :code:`api_key` or :code:`token` must be provided for the contents manager to be able to
 authenticate with the Girder server.
 
 .. |build-status| image:: https://circleci.com/gh/girder/girder_jupyter.png?style=shield
