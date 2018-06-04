@@ -15,7 +15,7 @@ from tornado import web
 import girder_client
 
 
-class GirderFileManager(ContentsManager):
+class GirderContentsManager(ContentsManager):
 
     api_url = Unicode(
         allow_none=True,
@@ -83,7 +83,7 @@ class GirderFileManager(ContentsManager):
         return root
 
     def __init__(self, *args, **kwargs):
-        super(GirderFileManager, self).__init__(*args, **kwargs)
+        super(GirderContentsManager, self).__init__(*args, **kwargs)
         # Render {login}
         self.root = self._render_login(self.root)
 
