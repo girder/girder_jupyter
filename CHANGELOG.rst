@@ -38,3 +38,8 @@ Bug fixes
 ---------
 
 * Guard against file creation under a user.
+
+Changes
+-------
+* The contents manager class has be renamed to girder_jupyter.contents.manager.GirderContentsManager
+to better fit with estabilised naming conventions.
