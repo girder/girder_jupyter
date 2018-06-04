@@ -103,14 +103,14 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^v.*/
+              only: /.*?/
       - release:
           requires:
             - build
 
           filters:
             tags:
-              only: /^v.*/
+              only: /.*?/
             branches:
               only:
                 - master
