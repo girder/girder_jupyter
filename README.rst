@@ -25,17 +25,17 @@ Add the following options to your :code:`jupyter_notebook_config.py`
     c.GirderFileManager.api_key = '<api key>'
     c.GirderFileManager.api_url = '<api url>'
 
-Where :code:`<api key>` is replaced with a `Girder API key <https://girder.readthedocs.io/en/latest/user-guide.html?highlight=API%20Key#api-keys>`_ for the Girder server and :code:`<api url>` is the URL to Girder instance you want
+Where :code:`<api key>` is replaced with a `Girder API key <https://girder.readthedocs.io/en/latest/user-guide.html?highlight=API%20Key#api-keys>`__ for the Girder server and :code:`<api url>` is the URL to Girder instance you want
 to use for example http://localhost:8080/api/v1.
 
 Configuration Parameters
 ========================
 
 - :code:`api_url` - An API URL for the Girder server. Defaults to 'http://localhost:8080/api/v1'
-- :code:`api_key` -A `Girder API key <https://girder.readthedocs.io/en/latest/user-guide.html?highlight=API%20Key#api-keys>`_ key for the Girder server at :code:`api_url`. The key should have read and write permission scope.
+- :code:`api_key` -A `Girder API key <https://girder.readthedocs.io/en/latest/user-guide.html?highlight=API%20Key#api-keys>`__ key for the Girder server at :code:`api_url`. The key should have read and write permission scope.
 - :code:`token` - A Girder token for the Girder server at :code:`api_url`. This parameter is particularly useful when running instances from JupyterHub.
 - :code:`root` - The root in the Girder hierarchy to use as the content managers root. This path can
-include :code:`{login}` which will be replace with the current users login. Defaults to :code:`'user/{login}'`
+                 include :code:`{login}` which will be replace with the current users login. Defaults to :code:`'user/{login}'`
 
 Note that either :code:`api_key` or :code:`token` must be provided for the contents manager to be able to
 authenticate with the Girder server.
