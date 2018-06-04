@@ -1,7 +1,7 @@
 ==============
 girder_jupyter
 ==============
-|build-status|
+|build-status| |pypi-version| |pypi-status|
 
 The Jupyter Notebook web application provides a graphical interface for creating, opening, renaming, and deleting files in a virtual filesystem. girder_jupyter is a python package that implements a `contents manager <http://jupyter-notebook.readthedocs.io/en/latest/extending/contents.html>`_
 to allow Girder to become a backend for this virtual filesystem. This allows notebooks and files to be stored
@@ -43,3 +43,12 @@ authenticate with the Girder server.
 .. |build-status| image:: https://circleci.com/gh/girder/girder_jupyter.png?style=shield
     :target: https://circleci.com/gh/girder/girder_jupyter
     :alt: Build Status
+
+.. |pypi-version| image:: https://img.shields.io/pypi/v/girder-jupyter.svg
+    :target: https://pypi.python.org/pypi/girder-jupyter/
+    :alt: PyPI version
+
+.. |pypi-status| image:: https://img.shields.io/pypi/status/girder-jupyter.svg
+    :target: https://pypi.python.org/pypi/girder-jupyter/
+    :alt: PyPI status
+
