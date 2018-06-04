@@ -409,7 +409,10 @@ class GirderContentsManager(ContentsManager):
 
         parent = self._create_folders('/'.join(folder_path))
 
-        if self._is_item(parent):
+        if self._is_user(parent):
+            raise web.HTTPError(400, 'Can\'t create file under user.',
+                                reason='Can\'t create file under user.')
+        elif self._is_item(parent):
             item = parent
         else:
             item = self.gc.loadOrCreateItem(name, parent['_id'], reuseExisting=True)
