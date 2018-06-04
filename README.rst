@@ -21,9 +21,9 @@ Add the following options to your :code:`jupyter_notebook_config.py`
 
 .. code-block:: python
 
-    c.NotebookApp.contents_manager_class = 'girder_jupyter.contents.girderfilemanager.GirderFileManager'
-    c.GirderFileManager.api_key = '<api key>'
-    c.GirderFileManager.api_url = '<api url>'
+    c.NotebookApp.contents_manager_class = 'girder_jupyter.contents.manager.GirderContentsManager'
+    c.GirderContentsManager.api_key = '<api key>'
+    c.GirderContentsManager.api_url = '<api url>'
 
 Where :code:`<api key>` is replaced with a `Girder API key <https://girder.readthedocs.io/en/latest/user-guide.html?highlight=API%20Key#api-keys>`_ for the Girder server and :code:`<api url>` is the URL to Girder instance you want
 to use for example http://localhost:8080/api/v1.
