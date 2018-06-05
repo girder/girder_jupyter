@@ -34,7 +34,7 @@ setup(
     name='girder-jupyter',
     use_scm_version={'local_scheme': prerelease_local_scheme},
     setup_requires=['setuptools_scm'],
-    version='0.1.0',
+    version='0.2.0',
     description='A jupyter content manager for Girder',
     long_description=long_description,
     url='https://github.com/girder/girder_jupyter',
