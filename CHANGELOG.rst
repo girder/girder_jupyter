@@ -41,5 +41,5 @@ Bug fixes
 
 Changes
 -------
-* The contents manager class has be renamed to girder_jupyter.contents.manager.GirderContentsManager
-to better fit with estabilised naming conventions.
+* The contents manager class has been renamed to girder_jupyter.contents.manager.GirderContentsManager
+to better fit with established naming conventions.
