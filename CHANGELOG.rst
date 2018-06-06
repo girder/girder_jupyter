@@ -43,3 +43,12 @@ Changes
 -------
 * The contents manager class has been renamed to girder_jupyter.contents.manager.GirderContentsManager
 to better fit with established naming conventions.
+
+girder_jupyter 0.2.1
+====================
+
+
+Bug fixes
+---------
+
+* Improve error message when user tries to create a file under a Girder user.

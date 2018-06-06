@@ -174,7 +174,7 @@ class GirderContentsManager(ContentsManager):
         path = path.strip('/')
         girder_path = self._get_girder_path(path)
 
-        return self._resource_exists(girder_path, ['folder', 'item'])
+        return self._resource_exists(girder_path, ['folder', 'item', 'user'])
 
     def is_hidden(self, path):
         """Is path a hidden directory or file?
@@ -410,8 +410,10 @@ class GirderContentsManager(ContentsManager):
         parent = self._create_folders('/'.join(folder_path))
 
         if self._is_user(parent):
-            raise web.HTTPError(400, 'Can\'t create file under user.',
-                                reason='Can\'t create file under user.')
+            msg = 'The Girder user\'s home location may only contain ' \
+                'folders. Create or navigate to another folder before ' \
+                'creating or uploading a file.'
+            raise web.HTTPError(400, msg, reason=msg)
         elif self._is_item(parent):
             item = parent
         else:
