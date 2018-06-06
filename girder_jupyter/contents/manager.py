@@ -174,7 +174,7 @@ class GirderContentsManager(ContentsManager):
         path = path.strip('/')
         girder_path = self._get_girder_path(path)
 
-        return self._resource_exists(girder_path, ['folder', 'item'])
+        return self._resource_exists(girder_path, ['folder', 'item', 'user'])
 
     def is_hidden(self, path):
         """Is path a hidden directory or file?
