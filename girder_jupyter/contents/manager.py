@@ -88,7 +88,10 @@ class GirderContentsManager(ContentsManager):
         self.root = self._render_login(self.root)
 
     def _resource(self, path):
-        return self.gc.resourceLookup(path, test=True)
+        try:
+            return self.gc.resourceLookup(path)
+        except girder_client.HttpError:
+            return None
 
     def _resource_exists(self, path, model_type):
         resource = self._resource(path)
@@ -410,7 +413,7 @@ class GirderContentsManager(ContentsManager):
         parent = self._create_folders('/'.join(folder_path))
 
         if self._is_user(parent):
-            msg = 'The Girder user\'s home location may only contain ' \
+            msg = "The Girder user's home location may only contain " \
                 'folders. Create or navigate to another folder before ' \
                 'creating or uploading a file.'
             raise web.HTTPError(400, msg, reason=msg)

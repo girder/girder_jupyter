@@ -72,8 +72,10 @@ class GirderContentsTest(APITest):
         return resource['_modelType'] in model_type
 
     def _resource(self, path):
-
-        return self.gc.resourceLookup(path, test=True)
+        try:
+            return self.gc.resourceLookup(path)
+        except girder_client.HttpError:
+            return None
 
     def make_root_dir(self, name):
         return self.gc.createFolder(self.user['_id'], name, parentType='user')
