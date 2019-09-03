@@ -88,7 +88,10 @@ class GirderContentsManager(ContentsManager):
         self.root = self._render_login(self.root)
 
     def _resource(self, path):
-        return self.gc.resourceLookup(path, test=True)
+        try:
+            return self.gc.resourceLookup(path)
+        except girder_client.HttpError:
+            return None
 
     def _resource_exists(self, path, model_type):
         resource = self._resource(path)
