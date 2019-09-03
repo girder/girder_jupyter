@@ -73,7 +73,7 @@ class GirderContentsTest(APITest):
 
     def _resource(self, path):
         try:
-            return self.gc.resourceLookup(path, test=True)
+            return self.gc.resourceLookup(path)
         except girder_client.HttpError:
             return None
 
