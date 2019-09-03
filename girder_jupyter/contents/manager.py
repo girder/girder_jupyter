@@ -413,7 +413,7 @@ class GirderContentsManager(ContentsManager):
         parent = self._create_folders('/'.join(folder_path))
 
         if self._is_user(parent):
-            msg = 'The Girder user\'s home location may only contain ' \
+            msg = "The Girder user's home location may only contain " \
                 'folders. Create or navigate to another folder before ' \
                 'creating or uploading a file.'
             raise web.HTTPError(400, msg, reason=msg)
