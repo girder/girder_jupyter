@@ -5,3 +5,4 @@ notebook
 traitlets
 tornado
 six
+bleach==3.1.2
